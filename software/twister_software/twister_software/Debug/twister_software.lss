@@ -3,29 +3,29 @@ twister_software.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000050  00000000  00000000  00000054  2**1
+  0 .text         0000009c  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000000  00800060  00800060  000000a4  2**0
+  1 .data         00000000  00800060  00800060  000000f0  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .comment      00000030  00000000  00000000  000000a4  2**0
+  2 .comment      00000030  00000000  00000000  000000f0  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000000d4  2**2
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000120  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000020  00000000  00000000  00000110  2**0
+  4 .debug_aranges 00000028  00000000  00000000  0000015c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000529  00000000  00000000  00000130  2**0
+  5 .debug_info   00000693  00000000  00000000  00000184  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000004a4  00000000  00000000  00000659  2**0
+  6 .debug_abbrev 00000564  00000000  00000000  00000817  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000210  00000000  00000000  00000afd  2**0
+  7 .debug_line   000002ae  00000000  00000000  00000d7b  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000024  00000000  00000000  00000d10  2**2
+  8 .debug_frame  00000034  00000000  00000000  0000102c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000031c  00000000  00000000  00000d34  2**0
+  9 .debug_str    00000342  00000000  00000000  00001060  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000048  00000000  00000000  00001050  2**0
+ 10 .debug_loc    00000150  00000000  00000000  000013a2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000010  00000000  00000000  00001098  2**0
+ 11 .debug_ranges 00000018  00000000  00000000  000014f2  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -52,48 +52,149 @@ Disassembly of section .text:
   20:	1f be       	out	0x3f, r1	; 63
   22:	cf ed       	ldi	r28, 0xDF	; 223
   24:	cd bf       	out	0x3d, r28	; 61
-  26:	02 d0       	rcall	.+4      	; 0x2c <main>
-  28:	11 c0       	rjmp	.+34     	; 0x4c <_exit>
+  26:	0b d0       	rcall	.+22     	; 0x3e <main>
+  28:	37 c0       	rjmp	.+110    	; 0x98 <_exit>
 
 0000002a <__bad_interrupt>:
   2a:	ea cf       	rjmp	.-44     	; 0x0 <__vectors>
 
-0000002c <main>:
+0000002c <my_delay>:
 #include <avr/io.h>
 #include <util/delay.h>
 
-int main(void)
+void my_delay(uint8_t counter)
 {
-	DDRB = 0b00000010;
-  2c:	82 e0       	ldi	r24, 0x02	; 2
-  2e:	87 bb       	out	0x17, r24	; 23
-    while (1) 
-    {
-		_delay_ms(3000);
-		PORTB ^= 0b01000010;
-  30:	92 e4       	ldi	r25, 0x42	; 66
+	while(counter != 0)
+  2c:	88 23       	and	r24, r24
+  2e:	31 f0       	breq	.+12     	; 0x3c <my_delay+0x10>
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  32:	2f ef       	ldi	r18, 0xFF	; 255
-  34:	3b e2       	ldi	r19, 0x2B	; 43
-  36:	81 e0       	ldi	r24, 0x01	; 1
-  38:	21 50       	subi	r18, 0x01	; 1
-  3a:	30 40       	sbci	r19, 0x00	; 0
-  3c:	80 40       	sbci	r24, 0x00	; 0
-  3e:	e1 f7       	brne	.-8      	; 0x38 <main+0xc>
-  40:	00 c0       	rjmp	.+0      	; 0x42 <__SREG__+0x3>
-  42:	00 00       	nop
-  44:	88 b3       	in	r24, 0x18	; 24
-  46:	89 27       	eor	r24, r25
-  48:	88 bb       	out	0x18, r24	; 24
-  4a:	f3 cf       	rjmp	.-26     	; 0x32 <main+0x6>
+  30:	95 e1       	ldi	r25, 0x15	; 21
+  32:	9a 95       	dec	r25
+  34:	f1 f7       	brne	.-4      	; 0x32 <my_delay+0x6>
+  36:	00 00       	nop
+	{
+		_delay_us(500);
+		counter--;
+  38:	81 50       	subi	r24, 0x01	; 1
+#include <avr/io.h>
+#include <util/delay.h>
 
-0000004c <_exit>:
-  4c:	f8 94       	cli
+void my_delay(uint8_t counter)
+{
+	while(counter != 0)
+  3a:	d1 f7       	brne	.-12     	; 0x30 <my_delay+0x4>
+  3c:	08 95       	ret
 
-0000004e <__stop_program>:
-  4e:	ff cf       	rjmp	.-2      	; 0x4e <__stop_program>
+0000003e <main>:
+	}
+}
+
+int main(void)
+{
+	DDRB = 0b00001010;
+  3e:	8a e0       	ldi	r24, 0x0A	; 10
+  40:	87 bb       	out	0x17, r24	; 23
+	PORTB = 0b00000000;
+  42:	18 ba       	out	0x18, r1	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  44:	8f ef       	ldi	r24, 0xFF	; 255
+  46:	9c e7       	ldi	r25, 0x7C	; 124
+  48:	01 97       	sbiw	r24, 0x01	; 1
+  4a:	f1 f7       	brne	.-4      	; 0x48 <__SREG__+0x9>
+  4c:	00 c0       	rjmp	.+0      	; 0x4e <__SREG__+0xf>
+  4e:	00 00       	nop
+	_delay_ms(1000);
+	while(PINB & 0b00010000); //start
+  50:	b4 99       	sbic	0x16, 4	; 22
+  52:	fe cf       	rjmp	.-4      	; 0x50 <__SREG__+0x11>
+  54:	03 e0       	ldi	r16, 0x03	; 3
+		for(uint8_t i=2; i!=16; i++)
+		{
+			PORTB = 0b00001000;
+			my_delay(i);
+			PORTB = 0b00000000;
+			my_delay(16-i);
+  56:	10 e1       	ldi	r17, 0x10	; 16
+	
+	for(uint8_t zrywy=0; zrywy<3; zrywy++)
+	{
+		for(uint8_t i=2; i!=16; i++)
+		{
+			PORTB = 0b00001000;
+  58:	d8 e0       	ldi	r29, 0x08	; 8
+  5a:	12 c0       	rjmp	.+36     	; 0x80 <__DATA_REGION_LENGTH__>
+  5c:	d8 bb       	out	0x18, r29	; 24
+			my_delay(i);
+  5e:	8c 2f       	mov	r24, r28
+  60:	e5 df       	rcall	.-54     	; 0x2c <my_delay>
+			PORTB = 0b00000000;
+  62:	18 ba       	out	0x18, r1	; 24
+			my_delay(16-i);
+  64:	81 2f       	mov	r24, r17
+  66:	8c 1b       	sub	r24, r28
+  68:	e1 df       	rcall	.-62     	; 0x2c <my_delay>
+	
+	
+	
+	for(uint8_t zrywy=0; zrywy<3; zrywy++)
+	{
+		for(uint8_t i=2; i!=16; i++)
+  6a:	cf 5f       	subi	r28, 0xFF	; 255
+  6c:	c0 31       	cpi	r28, 0x10	; 16
+  6e:	b1 f7       	brne	.-20     	; 0x5c <__SREG__+0x1d>
+  70:	8f ef       	ldi	r24, 0xFF	; 255
+  72:	9c e7       	ldi	r25, 0x7C	; 124
+  74:	01 97       	sbiw	r24, 0x01	; 1
+  76:	f1 f7       	brne	.-4      	; 0x74 <__SREG__+0x35>
+  78:	00 c0       	rjmp	.+0      	; 0x7a <__SREG__+0x3b>
+  7a:	00 00       	nop
+  7c:	01 50       	subi	r16, 0x01	; 1
+	_delay_ms(1000);
+	while(PINB & 0b00010000); //start
+	
+	
+	
+	for(uint8_t zrywy=0; zrywy<3; zrywy++)
+  7e:	11 f0       	breq	.+4      	; 0x84 <__DATA_REGION_LENGTH__+0x4>
+		counter--;
+	}
+}
+
+int main(void)
+{
+  80:	c2 e0       	ldi	r28, 0x02	; 2
+  82:	ec cf       	rjmp	.-40     	; 0x5c <__SREG__+0x1d>
+	
+	
+	
+	
+	
+	PORTB = 0b00000000; //off
+  84:	18 ba       	out	0x18, r1	; 24
+  86:	8f ef       	ldi	r24, 0xFF	; 255
+  88:	99 ef       	ldi	r25, 0xF9	; 249
+  8a:	01 97       	sbiw	r24, 0x01	; 1
+  8c:	f1 f7       	brne	.-4      	; 0x8a <__DATA_REGION_LENGTH__+0xa>
+  8e:	00 c0       	rjmp	.+0      	; 0x90 <__DATA_REGION_LENGTH__+0x10>
+  90:	00 00       	nop
+	_delay_ms(2000);
+	PORTB = 0b00000010; //suicide
+  92:	82 e0       	ldi	r24, 0x02	; 2
+  94:	88 bb       	out	0x18, r24	; 24
+  96:	ff cf       	rjmp	.-2      	; 0x96 <__DATA_REGION_LENGTH__+0x16>
+
+00000098 <_exit>:
+  98:	f8 94       	cli
+
+0000009a <__stop_program>:
+  9a:	ff cf       	rjmp	.-2      	; 0x9a <__stop_program>

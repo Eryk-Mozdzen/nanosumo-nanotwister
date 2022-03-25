@@ -1,0 +1,113 @@
+
+twister_software.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000098  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000000ec  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000ec  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000011c  2**2
+                  CONTENTS, READONLY
+  4 .debug_info   00000420  00000000  00000000  00000158  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 000003e8  00000000  00000000  00000578  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000000e9  00000000  00000000  00000960  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    0000016a  00000000  00000000  00000a49  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0e c0       	rjmp	.+28     	; 0x1e <__ctors_end>
+   2:	13 c0       	rjmp	.+38     	; 0x2a <__bad_interrupt>
+   4:	12 c0       	rjmp	.+36     	; 0x2a <__bad_interrupt>
+   6:	11 c0       	rjmp	.+34     	; 0x2a <__bad_interrupt>
+   8:	10 c0       	rjmp	.+32     	; 0x2a <__bad_interrupt>
+   a:	0f c0       	rjmp	.+30     	; 0x2a <__bad_interrupt>
+   c:	0e c0       	rjmp	.+28     	; 0x2a <__bad_interrupt>
+   e:	0d c0       	rjmp	.+26     	; 0x2a <__bad_interrupt>
+  10:	0c c0       	rjmp	.+24     	; 0x2a <__bad_interrupt>
+  12:	0b c0       	rjmp	.+22     	; 0x2a <__bad_interrupt>
+  14:	0a c0       	rjmp	.+20     	; 0x2a <__bad_interrupt>
+  16:	09 c0       	rjmp	.+18     	; 0x2a <__bad_interrupt>
+  18:	08 c0       	rjmp	.+16     	; 0x2a <__bad_interrupt>
+  1a:	07 c0       	rjmp	.+14     	; 0x2a <__bad_interrupt>
+  1c:	06 c0       	rjmp	.+12     	; 0x2a <__bad_interrupt>
+
+0000001e <__ctors_end>:
+  1e:	11 24       	eor	r1, r1
+  20:	1f be       	out	0x3f, r1	; 63
+  22:	cf ed       	ldi	r28, 0xDF	; 223
+  24:	cd bf       	out	0x3d, r28	; 61
+  26:	0b d0       	rcall	.+22     	; 0x3e <main>
+  28:	35 c0       	rjmp	.+106    	; 0x94 <_exit>
+
+0000002a <__bad_interrupt>:
+  2a:	ea cf       	rjmp	.-44     	; 0x0 <__vectors>
+
+0000002c <my_delay>:
+  2c:	88 23       	and	r24, r24
+  2e:	31 f0       	breq	.+12     	; 0x3c <my_delay+0x10>
+  30:	9a e2       	ldi	r25, 0x2A	; 42
+  32:	9a 95       	dec	r25
+  34:	f1 f7       	brne	.-4      	; 0x32 <my_delay+0x6>
+  36:	00 c0       	rjmp	.+0      	; 0x38 <my_delay+0xc>
+  38:	81 50       	subi	r24, 0x01	; 1
+  3a:	f8 cf       	rjmp	.-16     	; 0x2c <my_delay>
+  3c:	08 95       	ret
+
+0000003e <main>:
+  3e:	8a e0       	ldi	r24, 0x0A	; 10
+  40:	87 bb       	out	0x17, r24	; 23
+  42:	18 ba       	out	0x18, r1	; 24
+  44:	8f ef       	ldi	r24, 0xFF	; 255
+  46:	9c e7       	ldi	r25, 0x7C	; 124
+  48:	01 97       	sbiw	r24, 0x01	; 1
+  4a:	f1 f7       	brne	.-4      	; 0x48 <__SREG__+0x9>
+  4c:	00 c0       	rjmp	.+0      	; 0x4e <__SREG__+0xf>
+  4e:	00 00       	nop
+  50:	b4 99       	sbic	0x16, 4	; 22
+  52:	fe cf       	rjmp	.-4      	; 0x50 <__SREG__+0x11>
+  54:	c3 e0       	ldi	r28, 0x03	; 3
+  56:	d8 e0       	ldi	r29, 0x08	; 8
+  58:	d8 bb       	out	0x18, r29	; 24
+  5a:	8e e0       	ldi	r24, 0x0E	; 14
+  5c:	e7 df       	rcall	.-50     	; 0x2c <my_delay>
+  5e:	18 ba       	out	0x18, r1	; 24
+  60:	82 e0       	ldi	r24, 0x02	; 2
+  62:	e4 df       	rcall	.-56     	; 0x2c <my_delay>
+  64:	d8 bb       	out	0x18, r29	; 24
+  66:	8f e0       	ldi	r24, 0x0F	; 15
+  68:	e1 df       	rcall	.-62     	; 0x2c <my_delay>
+  6a:	18 ba       	out	0x18, r1	; 24
+  6c:	81 e0       	ldi	r24, 0x01	; 1
+  6e:	de df       	rcall	.-68     	; 0x2c <my_delay>
+  70:	8f ef       	ldi	r24, 0xFF	; 255
+  72:	9c e7       	ldi	r25, 0x7C	; 124
+  74:	01 97       	sbiw	r24, 0x01	; 1
+  76:	f1 f7       	brne	.-4      	; 0x74 <__SREG__+0x35>
+  78:	00 c0       	rjmp	.+0      	; 0x7a <__SREG__+0x3b>
+  7a:	00 00       	nop
+  7c:	c1 50       	subi	r28, 0x01	; 1
+  7e:	61 f7       	brne	.-40     	; 0x58 <__SREG__+0x19>
+  80:	18 ba       	out	0x18, r1	; 24
+  82:	8f ef       	ldi	r24, 0xFF	; 255
+  84:	99 ef       	ldi	r25, 0xF9	; 249
+  86:	01 97       	sbiw	r24, 0x01	; 1
+  88:	f1 f7       	brne	.-4      	; 0x86 <__DATA_REGION_LENGTH__+0x6>
+  8a:	00 c0       	rjmp	.+0      	; 0x8c <__DATA_REGION_LENGTH__+0xc>
+  8c:	00 00       	nop
+  8e:	82 e0       	ldi	r24, 0x02	; 2
+  90:	88 bb       	out	0x18, r24	; 24
+  92:	ff cf       	rjmp	.-2      	; 0x92 <__DATA_REGION_LENGTH__+0x12>
+
+00000094 <_exit>:
+  94:	f8 94       	cli
+
+00000096 <__stop_program>:
+  96:	ff cf       	rjmp	.-2      	; 0x96 <__stop_program>
